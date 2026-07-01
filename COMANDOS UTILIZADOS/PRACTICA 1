@@ -1,0 +1,51 @@
+(Ingresar la contraseña del usuario 'hacku' por última vez)
+
+Paso 2.4: Crear y editar el script de sincronización automatizada.
+$ nano ~/sincronizar.sh
+
+Paso 2.5: Asignar permisos de ejecución al script (Paso crítico para el Cron).
+$ chmod +x ~/sincronizar.sh
+
+Paso 2.6: Realizar una ejecución de prueba manual para validar que no existan errores.
+$ /bin/bash /home/redhat/sincronizar.sh
+
+Paso 2.7: Configurar la tarea programada en el demonio Cron (Crontab).
+$ crontab -e
+
+Paso 2.8: Crear un archivo de prueba adicional para validar el funcionamiento del Cron.
+$ touch ~/sincronizacion_practica/archivo_final.txt
+
+
+--------------------------------------------------------------------------------
+3. CONTENIDO DE LOS ARCHIVOS DE CONFIGURACIÓN (SERVIDOR PRIMARIO)
+--------------------------------------------------------------------------------
+
+A) Script de Sincronización (~/sincronizar.sh):
+--------------------------------------------------------
+#!/bin/bash
+# Script de sincronización automática - Práctica 1
+
+ORIGEN="$HOME/sincronizacion_practica/"
+DESTINO="hacku@172.27.218.146:/home/hacku/sincronizacion_remota/"
+
+# Uso de la ruta absoluta del binario rsync para entornos Cron seguros
+/usr/bin/rsync -avz "$ORIGEN" "$DESTINO"
+--------------------------------------------------------
+
+B) Línea de Tarea Programada en el Crontab (crontab -e):
+--------------------------------------------------------
+* * * * * /bin/bash /home/redhat/sincronizar.sh > /dev/null 2>&1
+--------------------------------------------------------
+Nota: Los 5 asteriscos (* * * * *) le indican al sistema operativo que ejecute 
+el script de forma estricta cada 1 minuto de manera indefinida.
+
+
+--------------------------------------------------------------------------------
+4. VERIFICACIÓN FINAL DESDE EL SERVIDOR SECUNDARIO
+--------------------------------------------------------------------------------
+Espere un minuto y ejecute el comando de listado en la máquina clon:
+$ ls -la /home/hacku/sincronizacion_remota/
+
+Deberá observar los 100 archivos base y el archivo 'archivo_final.txt' 
+sincronizados correctamente con sus marcas de tiempo actualizadas.
+================================================================================
